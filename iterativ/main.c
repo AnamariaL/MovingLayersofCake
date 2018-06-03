@@ -184,9 +184,5 @@ int main()
         continue;
     }
   }
-  //printf("\nCompleted\nFinal Position\n");
-  //displayp1();
- //displayp2();
-  //displayp3();
   return 0;
 }
