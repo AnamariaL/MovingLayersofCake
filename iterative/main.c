@@ -4,16 +4,14 @@
 #include <limits.h>
 
 // A structure to represent a stack
-struct Stack
-{
+struct Stack{
    unsigned capacity;
    int top;
    int *array;
 };
 
 // function to create a stack of given capacity.
-struct Stack* createStack(unsigned capacity)
-{
+struct Stack* createStack(unsigned capacity){
     struct Stack* stack =
         (struct Stack*) malloc(sizeof(struct Stack));
     stack -> capacity = capacity;
@@ -24,21 +22,18 @@ struct Stack* createStack(unsigned capacity)
 }
 
 // Stack is full when top is equal to the last index
-int isFull(struct Stack* stack)
-{
+int isFull(struct Stack* stack){
    return (stack->top == stack->capacity - 1);
 }
 
 // Stack is empty when top is equal to -1
-int isEmpty(struct Stack* stack)
-{
+int isEmpty(struct Stack* stack){
    return (stack->top == -1);
 }
 
 // Function to add an item to stack.  It increases
 // top by 1
-void push(struct Stack *stack, int item)
-{
+void push(struct Stack *stack, int item){
     if (isFull(stack))
         return;
     stack -> array[++stack -> top] = item;
@@ -46,108 +41,97 @@ void push(struct Stack *stack, int item)
 
 // Function to remove an item from stack.  It
 // decreases top by 1
-int pop(struct Stack* stack)
-{
+int pop(struct Stack* stack){
     if (isEmpty(stack))
         return INT_MIN;
     return stack -> array[stack -> top--];
 }
 
 // Function to implement legal movement between
-// two poles
-void moveDisksBetweenTwoPoles(struct Stack *src,
-            struct Stack *dest, char s, char d)
-{
-    int pole1TopDisk = pop(src);
-    int pole2TopDisk = pop(dest);
+// two plates
+void moveLayersbetweenPlates(struct Stack *source,
+            struct Stack *dest, char s, char d){
+    int plate1TopLayer = pop(source);
+    int plate2TopLayer = pop(dest);
 
-    // When pole 1 is empty
-    if (pole1TopDisk == INT_MIN)
-    {
-        push(src, pole2TopDisk);
-        moveDisk(d, s, pole2TopDisk);
+    // When plate1 is empty
+    if (plate1TopLayer == INT_MIN){
+        push(source, plate2TopLayer);
+        moveLayer(d, s, plate2TopLayer);
     }
 
-    // When pole2 pole is empty
-    else if (pole2TopDisk == INT_MIN)
-    {
-        push(dest, pole1TopDisk);
-        moveDisk(s, d, pole1TopDisk);
+    // When plate2 pole is empty
+    else if (plate2TopLayer == INT_MIN){
+        push(dest, plate1TopLayer);
+        moveLayer(s, d, plate1TopLayer);
     }
 
-    // When top disk of pole1 > top disk of pole2
-    else if (pole1TopDisk > pole2TopDisk)
-    {
-        push(src, pole1TopDisk);
-        push(src, pole2TopDisk);
-        moveDisk(d, s, pole2TopDisk);
+    // When top layer of plate1 > top layer of plate2
+    else if (plate1TopLayer > plate2TopLayer){
+        push(source, plate1TopLayer);
+        push(source, plate2TopLayer);
+        moveLayer(d, s, plate2TopLayer);
     }
 
-    // When top disk of pole1 < top disk of pole2
-    else
-    {
-        push(dest, pole2TopDisk);
-        push(dest, pole1TopDisk);
-        moveDisk(s, d, pole1TopDisk);
+    // When top layer of plate1 < top layer of plate2
+    else{
+        push(dest, plate2TopLayer);
+        push(dest, plate1TopLayer);
+        moveLayer(s, d, plate1TopLayer);
     }
 }
 
-//Function to show the movement of disks
-void moveDisk(char fromPeg, char toPeg, int disk)
-{
+//Function to show the movement 
+void moveLayer(char fromPlate, char toPlate, int layer){
     printf("Move the disk %d from \'%c\' to \'%c\'\n",
-           disk, fromPeg, toPeg);
+           layer, fromPlate, toPlate);
 }
 
-//Function to implement TOH puzzle
-void tohIterative(int num_of_disks, struct Stack
-             *src, struct Stack *aux,
-             struct Stack *dest)
-{
+//Function to implement  puzzle
+void movingCakeIterative(int num_of_disks, struct Stack
+             *source, struct Stack *aux,
+             struct Stack *dest){
     int i, total_num_of_moves;
-    char s = 'S', d = 'D', a = 'A';
+    char s = 'S', d = 'G', a = 'B';//s-source,d-destination,a-auxiliary; S-silver, G-gold, B-bronze
 
-    //If number of disks is even, then interchange
+    //If number of layers is even, then interchange
     //destination pole and auxiliary pole
-    if (num_of_disks % 2 == 0)
-    {
+    if (num_of_stories % 2 == 0){
         char temp = d;
         d = a;
         a  = temp;
     }
-    total_num_of_moves = pow(2, num_of_disks) - 1;
+    total_num_of_moves = pow(2, num_of_stories) - 1;
 
-    //Larger disks will be pushed first
-    for (i = num_of_disks; i >= 1; i--)
-        push(src, i);
+    //Larger layer will be pushed first
+    for (i = num_of_stories; i >= 1; i--)
+        push(source, i);
 
-    for (i = 1; i <= total_num_of_moves; i++)
-    {
+    for (i = 1; i <= total_num_of_moves; i++){
         if (i % 3 == 1)
-          moveDisksBetweenTwoPoles(src, dest, s, d);
+          moveLayersbetweenPlates(source, dest, s, d);
 
         else if (i % 3 == 2)
-          moveDisksBetweenTwoPoles(src, aux, s, a);
+          moveLayersbetweenPlates(source, aux, s, a);
 
         else if (i % 3 == 0)
-          moveDisksBetweenTwoPoles(aux, dest, a, d);
+          moveLayersbetweenPlates(aux, dest, a, d);
     }
 }
 
 // Driver Program
-int main()
-{
-    // Input: number of disks
-    unsigned num_of_disks = 3;
+int main(){
+    // Input
+    unsigned num_of_stories = 3;
 
-    struct Stack *src, *dest, *aux;
+    struct Stack *source, *dest, *aux;
 
-    // Create three stacks of size 'num_of_disks'
-    // to hold the disks
-    src = createStack(num_of_disks);
-    aux = createStack(num_of_disks);
-    dest = createStack(num_of_disks);
+    // Create three stacks of size 'num_of_stories'
+    // to hold the layers
+    source = createStack(num_of_stories);
+    aux = createStack(num_of_stories);
+    dest = createStack(num_of_stories);
 
-    tohIterative(num_of_disks, src, aux, dest);
+    movingCakeIterative(num_of_stories, source, aux, dest);
     return 0;
 }
