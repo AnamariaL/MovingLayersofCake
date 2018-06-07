@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "display.h"
 int main() {
     int n;//layers
     printf("How many layers of cake  : ");
